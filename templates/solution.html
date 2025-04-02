@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>Método Bisección</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+    <script defer src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</head>
+
+<body class="bg-dark" data-bs-theme="dark">
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/Logo Personal - Blanco.png" alt="Logo" height="24" class="d-inline-block align-text-top">
+                Roberto Rodríguez
+            </a>
+        </div>
+    </nav>
+    <div class="container text-body">
+        <h1 class="mt-5 text-center">Polinomio de Interpolación Único</h1>
+        <div class="row justify-content-center mt-5">
+            <div class="col-8">
+                <table class="table table-striped-columns table-bordered table-responsive text-center align-middle">
+                    <tr>
+                        <th><math class="fs-4" display="block"><mi>x</mi></math></th>
+                        {% for item in x %}
+                            <td class="">{{ item | round() }}</td>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <th><math class="fs-4" display="block"><mi>y</mi></math></th>
+                        {% for item in y %}
+                            <td class="">{{ item | round(6) }}</td>
+                        {% endfor %}
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <p class="text-center mt-5 fs-5">El polinomio resultante es:</p>
+        <math display="block" class="fs-5 mt-1">
+            <msub>
+                <mi>P</mi>
+                <mn>{{ (a|length)-1 }}</mn>
+            </msub>
+            <mo>(</mo>
+            <mi>x</mi>
+            <mo>)</mo>
+            <mo>=</mo>
+            {% for coef in a %}
+                {% if coef | float >= 0 %}
+                    {% if loop.index != 1 %}
+                        <mo>+</mo>
+                    {% endif %}
+                    <mn>{{ coef | float | round(8) }}</mn>
+                {% else %}
+                    <mo>-</mo>
+                    <mn>{{ coef | float | abs | round(8) }}</mn>
+                {% endif %}
+                {% if (loop.index - 1) == 1 %}
+                    <mi>x</mi>
+                {% elif (loop.index - 1) != 0 %}
+                    <msup>
+                        <mi>x</mi>
+                        <mn>{{ loop.index - 1 }}</mn>
+                    </msup>
+                {% endif %}
+            {% endfor %}
+        </math>
+        <p class="text-center mt-5 fs-5">Evaluando para <math display="inline"><mi>x</mi><mo>=</mo><mn>{{ x_n }}</mn></math> :</p>
+        <math display="block" class="fs-1 mt-1">
+            <menclose notation="box">
+                <mi>P</mi>
+                <mo>(</mo>
+                <mn>{{ x_n }}</mn>
+                <mo>)</mo>
+                <mo>=</mo>
+                <mn>{{ p_n }}</mn>
+            </menclose>
+        </math>
+    </div>
+    <footer class="footer fixed-bottom">
+        <div class="row p4 justify-content-center fs-10 mt-5 mb-3">
+            <div class="col-8 col-sm-auto text-center">
+                <p class="mb-0 text-600">Todos los derechos reservados <span class="d-none d-sm-inline-block">|
+                    </span><br class="d-sm-none"> 2025 © <a href="https://github.com/robertojrdz/unique-polynomial-interpolation">Roberto Rodríguez</a></p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <title>Método Bisección</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap.min.css') }}" />
+    <script defer src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+</head>
+
+<body class="bg-dark" data-bs-theme="dark">
+    <nav class="navbar">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="/static/Logo Personal - Blanco.png" alt="Logo" height="24" class="d-inline-block align-text-top">
+                Roberto Rodríguez
+            </a>
+        </div>
+    </nav>
+    <div class="container text-body">
+        <h1 class="mt-5 text-center">Polinomio de Interpolación Único</h1>
+        {% if error %}
+            {% if error == '!inside' %}
+                <div class="row justify-content-center">
+                    <div class="alert alert-danger col-auto p-2" role="alert">
+                        ERROR el valor de <math><mi>x</mi></math> a interpolar, no se encuentra dentro del rango de los datos de entrada
+                    </div>
+                </div>
+            {% endif %}
+            {% if error == '!sort' %}
+                <div class="row justify-content-center">
+                    <div class="alert alert-danger col-auto p-2" role="alert">
+                        ERROR los datos de entrada no estan ordenados
+                    </div>
+                </div>
+            {% endif %}
+        {% endif %}
+        <form id="form" action="/solve/3" method="post" {% if not error %}class="mt-5"{% endif %}>
+            <div class="container d-flex justify-content-evenly align-items-center">
+                <a title="Quitar datos">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
+                        class="bi bi-dash-square-fill btn p-0 m-0" viewBox="0 0 16 16" onclick="decreasePairs()">
+                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8" />
+                    </svg>
+                </a>
+                <div class="col-10">
+                    <div id="x" class="input-group">
+                        <span class="input-group-text justify-content-center col-1 p-2"><math display="inline"><mi>x</mi></math></span>
+                        <input class="form-control" type="number" step="any" name="x_0" required>
+                        <input class="form-control" type="number" step="any" name="x_1" required>
+                        <input class="form-control" type="number" step="any" name="x_2" required>
+                    </div>
+                    <div id="y" class="input-group">
+                        <span class="input-group-text justify-content-center col-1 p-2"><math display="block"><mi>y</mi></math></span>
+                        <input class="form-control" type="number" step="any" name="y_0" required>
+                        <input class="form-control" type="number" step="any" name="y_1" required>
+                        <input class="form-control" type="number" step="any" name="y_2" required>
+                    </div>
+                </div>
+                <a title="Agregar datos">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="white"
+                        class="bi bi-plus-square-fill btn p-0 m-0" viewBox="0 0 16 16" onclick="increasePairs()">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                    </svg>
+                </a>
+            </div>
+            <div class="container d-flex justify-content-center mt-5">
+                <div class="col-2">
+                    <div class="input-group">
+                        <span class="input-group-text"><math display="inline"><mi>x</mi></math></span>
+                        <input class="form-control" type="number" step="any" name="x_n" required>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center">
+                <input type="submit" class="btn mt-5" value="Interpolar x">
+            </div>
+        </form>
+    </div>
+    <footer class="footer fixed-bottom">
+        <div class="row p4 justify-content-center fs-10 mt-5 mb-3">
+            <div class="col-8 col-sm-auto text-center">
+                <p class="mb-0 text-600">Todos los derechos reservados <span class="d-none d-sm-inline-block">|
+                    </span><br class="d-sm-none"> 2025 © <a href="https://github.com/robertojrdz/unique-polynomial-interpolation">Roberto Rodríguez</a></p>
+            </div>
+        </div>
+    </footer>
+    <script>
+        let currentPairs = 2;
+
+        function increasePairs() {
+            currentPairs++;
+            updatePairNumber();
+        }
+
+        function decreasePairs() {
+            if (currentPairs > 2) {
+                currentPairs--;
+                updatePairNumber();
+            }
+        }
+
+        function updatePairNumber() {
+            const x_container = document.getElementById("x");
+            const y_container = document.getElementById("y");
+            x_container.innerHTML = `<span class="input-group-text"><math><mi>x</mi></math></span>`;
+            y_container.innerHTML = `<span class="input-group-text"><math><mi>y</mi></math></span>`;
+            for (let i = 0; i <= currentPairs; i++) {
+                const x_input = document.createElement("input");
+                const y_input = document.createElement("input");
+                x_input.className = y_input.className = "form-control";
+                x_input.type = y_input.type = "number";
+                x_input.step = y_input.step = "any";
+                x_input.name = `x_${i}`;
+                y_input.name = `y_${i}`;
+                x_input.required = y_input.required = true;
+                x_container.appendChild(x_input);
+                y_container.appendChild(y_input);
+            }
+        }
+
+        document.getElementById("form").addEventListener("submit", function (event) {
+            this.action = `/solve/${currentPairs + 1}`;
+        });
+    </script>
+</body>
+
+</html>
